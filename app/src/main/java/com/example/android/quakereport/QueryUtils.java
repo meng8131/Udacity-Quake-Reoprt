@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class QueryUtils {
@@ -105,34 +106,30 @@ public final class QueryUtils {
         if (TextUtils.isEmpty(earthquakeJSON)){
             return null;
         }
+        List<QuakeInfoClass> quakeInfoList = new ArrayList<>();
         try {
             JSONObject baseJsonObject = new JSONObject(earthquakeJSON);
             JSONArray featureArray = baseJsonObject.getJSONArray("features");
-            int i =0;
-            List<QuakeInfoClass> quakeInfoList = null;
-            if (featureArray.length()>0){
-                //循环获取所有的feature Array，再用其中的对应值构建一个QuakeInfoClass
-                while (i<featureArray.length()){
-                    //获取Feature序列的的第一个值（对象）
-                    JSONObject firstFeature = featureArray.getJSONObject(i);
-                    //获取Feature对象中的properties对象
-                    JSONObject properties = firstFeature.getJSONObject("properties");
 
-                    double mag = properties.getDouble("mag");
-                    String place = properties.getString("place");
-                    long time = properties.getLong("time");
-                    String url = properties.getString("url");
+            for (int i=0; i<featureArray.length();i++){
+                //获取Feature序列的的第一个值（对象）
+                JSONObject firstFeature = featureArray.getJSONObject(i);
+                //获取Feature对象中的properties对象
+                JSONObject properties = firstFeature.getJSONObject("properties");
 
-                    QuakeInfoClass quakeInfo = new QuakeInfoClass(mag, place, time, url);
-                    quakeInfoList.add(quakeInfo);
-                }
+                double mag = properties.getDouble("mag");
+                String place = properties.getString("place");
+                long time = properties.getLong("time");
+                String url = properties.getString("url");
+
+                QuakeInfoClass quakeInfo = new QuakeInfoClass(mag, place, time, url);
+                quakeInfoList.add(quakeInfo);
             }
-            return quakeInfoList;
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
         }
-        return null;
+        return quakeInfoList;
     }
 
 }
