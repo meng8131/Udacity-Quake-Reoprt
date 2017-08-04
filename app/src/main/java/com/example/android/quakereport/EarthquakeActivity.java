@@ -95,6 +95,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
         Log.i(LOG_TAG,"onLoadFinish() method is called");
 
+        //hide progress bar when load finished
+        View loadingIndicator = findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.GONE);
+
         //set empty TextView
         mEmptyStateTextView.setText(R.string.no_earthquakes);
 

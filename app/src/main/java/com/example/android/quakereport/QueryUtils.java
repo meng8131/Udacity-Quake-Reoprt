@@ -24,6 +24,14 @@ public final class QueryUtils {
 
     public static List<Earthquake> fetchEarthquakeData(String stringUrl) {
         Log.i(LOG_TAG,"fetchEarthquakeData() method is called");
+
+        //make thread to sleep for 2s to test loading indicator
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
         String jsonResponse = null;
         URL url = createUrl(stringUrl);
         try {
