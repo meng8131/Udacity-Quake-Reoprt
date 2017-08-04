@@ -23,6 +23,7 @@ public final class QueryUtils {
     public static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     public static List<Earthquake> fetchEarthquakeData(String stringUrl) {
+        Log.i(LOG_TAG,"fetchEarthquakeData() method is called");
         String jsonResponse = null;
         URL url = createUrl(stringUrl);
         try {

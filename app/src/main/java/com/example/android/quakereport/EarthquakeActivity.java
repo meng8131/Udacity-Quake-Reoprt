@@ -22,6 +22,7 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -43,6 +44,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(LOG_TAG,"Earthquake Activity onCreate() method is called");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
@@ -69,24 +72,28 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
         LoaderManager loaderManager = getLoaderManager();
 
+        Log.i(LOG_TAG,"initLoader() method is called");
         //Initialize Loader
         loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+
     }
 
 
     @Override
     public Loader<List<Earthquake>> onCreateLoader(int id, Bundle args) {
+        Log.i(LOG_TAG,"onCreateLoader() method is called");
         //create new loader using given url
         return new EarthquakeLoader(this, SAMPLE_REQUS_URL);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
+        Log.i(LOG_TAG,"onLoadFinish() method is called");
 
         //clear previous adapter data
         mAdapter.clear();
 
-        //add earthquake data to adatper's data set
+        //add earthquake data to adapter's data set
         if (earthquakes != null && !earthquakes.isEmpty()){
             mAdapter.addAll(earthquakes);
         }
@@ -94,6 +101,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
     @Override
     public void onLoaderReset(Loader<List<Earthquake>> loader) {
+        Log.i(LOG_TAG,"onLoaderReset() method is called");
         mAdapter.clear();
     }
 }
