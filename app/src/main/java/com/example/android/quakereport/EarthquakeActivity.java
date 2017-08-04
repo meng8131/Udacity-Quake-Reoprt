@@ -15,69 +15,85 @@
  */
 package com.example.android.quakereport;
 
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class EarthquakeActivity extends AppCompatActivity {
+public class EarthquakeActivity extends AppCompatActivity implements LoaderCallbacks<List<Earthquake>>{
 
     /** Sample request url for a USGS query */
     private static final String SAMPLE_REQUS_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
+    //Constant value for Loadmanager ID
+    private static final int EARTHQUAKE_LOADER_ID = 1;
+
+    private EarthquakeAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
-        task.execute(SAMPLE_REQUS_URL);
+        // Find the ListView to set adapter
+        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+
+        //inflate customized adapter
+        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
+
+        //set the adapter
+        earthquakeListView.setAdapter(mAdapter);
+
+        //setup click listener and intent
+        AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Earthquake currentQuake = mAdapter.getItem(i);
+                Intent openURL = new Intent(Intent.ACTION_VIEW,Uri.parse(currentQuake.getURL()));
+                openURL.addCategory(Intent.CATEGORY_BROWSABLE);
+                startActivity(openURL);
+            }
+        };
+        earthquakeListView.setOnItemClickListener(onItemClickListener);
+
+        LoaderManager loaderManager = getLoaderManager();
+
+        //Initialize Loader
+        loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
     }
 
 
-        class EarthquakeAsyncTask extends AsyncTask<String, Void, List<QuakeInfoClass>>{
-            @Override
-            protected List<QuakeInfoClass> doInBackground(String... urls) {
-                if (urls.length<1 || urls ==null){
-                    return null;
-                }
-                List<QuakeInfoClass> earthquakeList = QueryUtils.fetchEarthquakeData(urls[0]);
-                return earthquakeList;
-            }
+    @Override
+    public Loader<List<Earthquake>> onCreateLoader(int id, Bundle args) {
+        //create new loader using given url
+        return new EarthquakeLoader(this, SAMPLE_REQUS_URL);
+    }
 
-            @Override
-            protected void onPostExecute(List<QuakeInfoClass> earthquakeList) {
-                List<QuakeInfoClass> quakeList = earthquakeList;
+    @Override
+    public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
 
-                // Find the ListView to set adapter
-                ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        //clear previous adapter data
+        mAdapter.clear();
 
-                //inflate customized adapter
-                final QuakeInfoAdapter quakeInfoAdapter = new QuakeInfoAdapter(EarthquakeActivity.this, quakeList);
-
-                //set the adapter
-                earthquakeListView.setAdapter(quakeInfoAdapter);
-
-                //setup click listener and intent
-                AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        QuakeInfoClass currentQuake = quakeInfoAdapter.getItem(i);
-                        Intent openURL = new Intent(Intent.ACTION_VIEW,Uri.parse(currentQuake.getURL()));
-                        openURL.addCategory(Intent.CATEGORY_BROWSABLE);
-                        startActivity(openURL);
-                    }
-                };
-                earthquakeListView.setOnItemClickListener(onItemClickListener);
-            }
+        //add earthquake data to adatper's data set
+        if (earthquakes != null && !earthquakes.isEmpty()){
+            mAdapter.addAll(earthquakes);
         }
+    }
 
+    @Override
+    public void onLoaderReset(Loader<List<Earthquake>> loader) {
+        mAdapter.clear();
+    }
 }

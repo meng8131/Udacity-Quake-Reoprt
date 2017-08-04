@@ -4,7 +4,7 @@ package com.example.android.quakereport;
  * Created by lyman on 2017/6/9.
  */
 
-public class QuakeInfoClass{
+public class Earthquake {
 
     //define variables
     Double mMag;
@@ -13,7 +13,7 @@ public class QuakeInfoClass{
     String mURL;
 
     //define constructor
-    public QuakeInfoClass(Double mag, String location, Long time, String url){
+    public Earthquake(Double mag, String location, Long time, String url){
         mMag = mag;
         mLocation = location;
         mTime = time;
@@ -36,6 +36,6 @@ public class QuakeInfoClass{
 
     @Override
     public String toString() {
-        return "QuakeInfoClass is " + mMag + "-" + "-" + mTime;
+        return "Earthquake is " + mMag + "-" + "-" + mTime;
     }
 }

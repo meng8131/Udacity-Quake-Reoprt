@@ -22,7 +22,7 @@ public final class QueryUtils {
     /** Tag for the log messages */
     public static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
-    public static List<QuakeInfoClass> fetchEarthquakeData(String stringUrl) {
+    public static List<Earthquake> fetchEarthquakeData(String stringUrl) {
         String jsonResponse = null;
         URL url = createUrl(stringUrl);
         try {
@@ -30,7 +30,7 @@ public final class QueryUtils {
         } catch (IOException e) {
             Log.e(LOG_TAG,"Error with closing input stream: ",e);
         }
-        List<QuakeInfoClass> earthquakeList = extractFromStream(jsonResponse);
+        List<Earthquake> earthquakeList = extractFromStream(jsonResponse);
         return earthquakeList;
 
     }
@@ -102,11 +102,11 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    private static List<QuakeInfoClass> extractFromStream(String earthquakeJSON){
+    private static List<Earthquake> extractFromStream(String earthquakeJSON){
         if (TextUtils.isEmpty(earthquakeJSON)){
             return null;
         }
-        List<QuakeInfoClass> quakeInfoList = new ArrayList<>();
+        List<Earthquake> quakeInfoList = new ArrayList<>();
         try {
             JSONObject baseJsonObject = new JSONObject(earthquakeJSON);
             JSONArray featureArray = baseJsonObject.getJSONArray("features");
@@ -122,7 +122,7 @@ public final class QueryUtils {
                 long time = properties.getLong("time");
                 String url = properties.getString("url");
 
-                QuakeInfoClass quakeInfo = new QuakeInfoClass(mag, place, time, url);
+                Earthquake quakeInfo = new Earthquake(mag, place, time, url);
                 quakeInfoList.add(quakeInfo);
             }
 

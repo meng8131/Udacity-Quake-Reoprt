@@ -20,8 +20,8 @@ import java.util.List;
  * Created by lyman on 2017/6/9.
  */
 
-public class QuakeInfoAdapter extends ArrayAdapter<QuakeInfoClass>{
-    public QuakeInfoAdapter(Context context, List<QuakeInfoClass> list){
+public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
+    public EarthquakeAdapter(Context context, List<Earthquake> list){
         super(context, 0, list);
     }
 
@@ -37,7 +37,7 @@ public class QuakeInfoAdapter extends ArrayAdapter<QuakeInfoClass>{
         }
 
         //get current value from ArrayList
-        final QuakeInfoClass currentInfo = getItem(position);
+        final Earthquake currentInfo = getItem(position);
 
         //format mag as 0.0
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
