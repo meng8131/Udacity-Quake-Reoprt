@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
     private static final int EARTHQUAKE_LOADER_ID = 1;
 
     private EarthquakeAdapter mAdapter;
+
+    private TextView mEmptyStateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
         //Initialize Loader
         loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
 
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
+        earthquakeListView.setEmptyView(mEmptyStateTextView);
     }
 
 
@@ -89,6 +94,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
         Log.i(LOG_TAG,"onLoadFinish() method is called");
+
+        //set empty TextView
+        mEmptyStateTextView.setText(R.string.no_earthquakes);
 
         //clear previous adapter data
         mAdapter.clear();
